@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>중간고사 공부 계획</title>
+<style>
+:root{
+  --bg:#f7f6f3; --card:#ffffff; --ink:#1e1c1a; --sub:#6b6560;
+  --line:#e6e2dc; --accent:#8a6a4e; --accent-soft:#f1e6da;
+  --done:#7a8a6a; --exam:#b5563f; --exam-soft:#fbeae5;
+  --today:#ffd66b;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171513; --card:#211f1c; --ink:#f0ece6; --sub:#a39c93;
+    --line:#3a3632; --accent:#c9a37c; --accent-soft:#332a20;
+    --done:#9db28a; --exam:#e08268; --exam-soft:#3a231d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171513; --card:#211f1c; --ink:#f0ece6; --sub:#a39c93;
+  --line:#3a3632; --accent:#c9a37c; --accent-soft:#332a20;
+  --done:#9db28a; --exam:#e08268; --exam-soft:#3a231d;
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif;
+  line-height:1.5;
+}
+header{
+  padding:0; position:sticky; top:0;
+  background:var(--bg); border-bottom:1px solid var(--line); z-index:5;
+}
+.header-inner{max-width:420px; margin:0 auto; padding:20px 16px 14px;}
+header h1{margin:0 0 4px; font-size:1.15rem;}
+header .dday{color:var(--accent); font-weight:700; font-size:0.95rem;}
+.progress-wrap{margin-top:10px; background:var(--line); border-radius:8px; height:8px; overflow:hidden;}
+.progress-bar{height:100%; background:var(--accent); width:0%; transition:width .3s;}
+.progress-label{font-size:0.78rem; color:var(--sub); margin-top:4px;}
+main{max-width:420px; margin:0 auto; padding:14px 12px 60px;}
+#detailView{max-width:420px; margin:0 auto; padding:10px 12px 60px;}
+.day{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px; margin-bottom:12px;
+}
+.day.today{border-color:var(--today); box-shadow:0 0 0 2px var(--today) inset;}
+.day.exam{background:var(--exam-soft); border-color:var(--exam);}
+.day-head{
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+  cursor:pointer; user-select:none;
+}
+.day-title{font-weight:700; font-size:1rem;}
+.day-title .todaytag{
+  font-size:0.68rem; background:var(--today); color:#3a2e00;
+  padding:1px 7px; border-radius:20px; margin-left:6px; font-weight:700;
+}
+.day-tags{display:flex; align-items:center; gap:6px; flex-shrink:0;}
+.day-tag{font-size:0.78rem; color:var(--sub);}
+.exam-tag{font-size:0.78rem; color:var(--exam); font-weight:700;}
+.arrow{font-size:1rem; color:var(--sub);}
+#detailView{display:none;}
+.backbtn{
+  display:inline-flex; align-items:center; gap:4px; background:none; border:none;
+  color:var(--accent); font-size:0.95rem; font-weight:700; padding:4px 0 14px;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.detail-head{margin-bottom:6px;}
+.detail-head .day-title{font-size:1.1rem;}
+ul.tasks{list-style:none; margin:14px 0 0; padding:0;}
+ul.tasks li{
+  display:flex; align-items:flex-start; gap:9px; padding:6px 0;
+  font-size:0.92rem;
+}
+ul.tasks li input[type=checkbox]{
+  margin-top:3px; width:17px; height:17px; accent-color:var(--accent); flex-shrink:0; cursor:pointer;
+}
+ul.tasks li .txt{flex:1; cursor:pointer; word-break:break-word;}
+ul.tasks li.checked .txt{color:var(--sub); text-decoration:line-through;}
+ul.tasks li .task-actions{display:flex; gap:2px; flex-shrink:0;}
+ul.tasks li .task-actions button{
+  background:none; border:none; color:var(--sub); font-size:0.9rem;
+  padding:2px 5px; cursor:pointer; border-radius:6px;
+}
+ul.tasks li .task-actions button:hover{background:var(--accent-soft);}
+ul.tasks li input[type=text]{
+  flex:1; font-size:0.92rem; padding:4px 6px; border-radius:6px;
+  border:1px solid var(--accent); background:var(--card); color:var(--ink); font-family:inherit;
+}
+.add-row{display:flex; gap:6px; margin-top:12px;}
+.add-row input{
+  flex:1; font-size:0.9rem; padding:8px 10px; border-radius:8px;
+  border:1px solid var(--line); background:var(--card); color:var(--ink); font-family:inherit;
+}
+.add-row button{
+  background:var(--accent); color:#fff; border:none; border-radius:8px;
+  padding:8px 14px; font-size:0.9rem; font-weight:700; cursor:pointer; flex-shrink:0;
+}
+.exam-subjects{
+  display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;
+}
+.exam-subjects span{
+  background:var(--exam); color:#fff; font-size:0.82rem;
+  padding:4px 10px; border-radius:20px; font-weight:600;
+}
+footer{text-align:center; color:var(--sub); font-size:0.75rem; padding:10px 0 30px;}
+</style>
+  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171513" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="중간고사 공부 계획">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <h1>고2 2학기 중간고사 공부 계획</h1>
+    <div class="dday" id="ddayLine">-</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">진행률 0%</div>
+  </div>
+</header>
+<main id="main"></main>
+<div id="detailView">
+  <button class="backbtn" id="backBtn">‹ 목록으로</button>
+  <div class="day detail-head" id="detailCard"></div>
+</div>
+<footer>체크는 이 기기 브라우저에만 저장돼요</footer>
+
+<script>
+const PLAN = [
+  {date:"2026-09-28", label:"9/28(월)", tasks:[
+    "새벽: 생명 개념 완독 마무리",
+    "오전~오후: 미적분1 변형문제 + 서술형",
+    "저녁: 수과탐 시작 (목차 훑기 + 우선순위 매기기)"
+  ]},
+  {date:"2026-09-29", label:"9/29(화)", tasks:[
+    "화법과 언어: 남은 개념 절반 마무리",
+    "화법과 언어: 문법 파트 시작"
+  ]},
+  {date:"2026-09-30", label:"9/30(수)", tasks:[
+    "오전: 화작 문법 마무리",
+    "오후~저녁: 수과탐 이어서"
+  ]},
+  {date:"2026-10-01", label:"10/1(목)", tasks:[
+    "수과탐 요약노트 마무리",
+    "지구과학 · 수과탐 최종 점검 (오답노트/요약노트 백지복습)"
+  ]},
+  {date:"2026-10-02", label:"10/2(금)", exam:true, examSubjects:["지구시스템과학","수학과제탐구"],
+   tasks:["아침: 지구과학 · 수과탐 요약노트/오답노트 마지막 훑기"]},
+  {date:"2026-10-03", label:"10/3(토)", tasks:[
+    "오전~오후: 확률과 통계 (조건부확률 등 약점 집중 문풀)",
+    "저녁: 화학 학습지 개념 재정리 시작"
+  ]},
+  {date:"2026-10-04", label:"10/4(일)", tasks:[
+    "오전: 화학 문제집 유형문제",
+    "오후: 영어2 올림포스 남은 지문 + 학원 분석지",
+    "저녁: 확률과 통계 오답노트 재점검"
+  ]},
+  {date:"2026-10-05", label:"10/5(월)", tasks:[
+    "오전: 영어2 학원 변형·예상문제로 마무리",
+    "오후: 화학 오답노트 마무리",
+    "저녁: 확통 · 화학 · 영어2 최종 점검"
+  ]},
+  {date:"2026-10-06", label:"10/6(화)", exam:true, examSubjects:["확률과 통계","물질과 에너지","영어2"],
+   tasks:["시험 후 저녁: 생명 · 미적분1 마무리 (남은 문제집 등)"]},
+  {date:"2026-10-07", label:"10/7(수)", exam:true, examSubjects:["세포와 물질대사","미적분1"],
+   tasks:["시험 후 저녁: 화법과 언어 마무리"]},
+  {date:"2026-10-08", label:"10/8(목)", exam:true, examSubjects:["화법과 언어"]}
+];
+
+function todayStr(){
+  const d = new Date();
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function daysBetween(a,b){
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+let store = {};
+try{
+  const raw = localStorage.getItem("examPlanChecks");
+  if(raw) store = JSON.parse(raw);
+}catch(e){ store = {}; }
+
+function save(){
+  try{ localStorage.setItem("examPlanChecks", JSON.stringify(store)); }catch(e){}
+}
+
+let taskData = {};
+function loadTaskData(){
+  try{
+    const raw = localStorage.getItem("examPlanTasks");
+    if(raw) taskData = JSON.parse(raw);
+  }catch(e){ taskData = {}; }
+  PLAN.forEach(day=>{
+    if(!taskData[day.date]){
+      taskData[day.date] = (day.tasks||[]).map((t,i)=>({id: day.date+"_"+i, text:t}));
+    }
+  });
+}
+function saveTaskData(){
+  try{ localStorage.setItem("examPlanTasks", JSON.stringify(taskData)); }catch(e){}
+}
+
+function headerLine(){
+  const today = todayStr();
+  const examDates = PLAN.filter(d=>d.exam).map(d=>d.date).sort();
+  let ddayText = "";
+  const upcoming = examDates.find(d => d >= today);
+  if(upcoming){
+    const diff = daysBetween(today, upcoming);
+    ddayText = diff === 0 ? "오늘 시험일입니다" : `다음 시험까지 D-${diff} (${upcoming.slice(5).replace("-","/")})`;
+  } else if(examDates.length){
+    ddayText = "시험 기간 종료";
+  }
+  document.getElementById("ddayLine").textContent = ddayText;
+}
+
+function ddayTagFor(day){
+  const examDates = PLAN.filter(d=>d.exam).map(d=>d.date).sort();
+  const target = examDates.find(d => d >= day.date);
+  if(!target) return "";
+  const diff = daysBetween(day.date, target);
+  return diff===0 ? "D-DAY" : `D-${diff}`;
+}
+
+function renderList(){
+  const today = todayStr();
+  const main = document.getElementById("main");
+  main.innerHTML = "";
+
+  PLAN.forEach(day=>{
+    const isToday = day.date===today;
+    const div = document.createElement("div");
+    div.className = "day" + (isToday ? " today":"") + (day.exam ? " exam":"");
+    const ddayTag = ddayTagFor(day);
+
+    const head = document.createElement("div");
+    head.className = "day-head";
+    head.innerHTML = `<span class="day-title">${day.label}${isToday?'<span class="todaytag">오늘</span>':''}</span>` +
+      `<span class="day-tags">` +
+        (ddayTag ? `<span class="day-tag">${ddayTag}</span>` : "") +
+        (day.exam ? `<span class="exam-tag">시험일</span>` : "") +
+        `<span class="arrow">›</span>` +
+      `</span>`;
+    head.addEventListener("click", ()=> goToDetail(day.date));
+    div.appendChild(head);
+    main.appendChild(div);
+  });
+}
+
+function buildTaskList(day){
+  const ul = document.createElement("ul");
+  ul.className = "tasks";
+  const list = taskData[day.date] || [];
+  list.forEach(t=>{
+    const checked = !!store[t.id];
+    const li = document.createElement("li");
+    li.className = checked ? "checked":"";
+    li.innerHTML = `<input type="checkbox" ${checked?"checked":""}>` +
+      `<span class="txt">${t.text}</span>` +
+      `<span class="task-actions"><button class="editBtn" title="수정">✎</button><button class="delBtn" title="삭제">×</button></span>`;
+
+    const cb = li.querySelector('input[type=checkbox]');
+    cb.addEventListener("click",()=>{
+      store[t.id] = cb.checked;
+      li.className = cb.checked ? "checked":"";
+      save();
+      updateProgress();
+    });
+    li.querySelector(".txt").addEventListener("click",()=>{ cb.click(); });
+
+    li.querySelector(".editBtn").addEventListener("click",()=>{
+      const span = li.querySelector(".txt");
+      const input = document.createElement("input");
+      input.type = "text"; input.value = t.text;
+      span.replaceWith(input);
+      input.focus();
+      const commit = ()=>{
+        const val = input.value.trim();
+        t.text = val || t.text;
+        saveTaskData();
+        showDetail(day.date);
+      };
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown",(e)=>{ if(e.key==="Enter") input.blur(); });
+    });
+
+    li.querySelector(".delBtn").addEventListener("click",()=>{
+      taskData[day.date] = taskData[day.date].filter(x=>x.id!==t.id);
+      delete store[t.id];
+      saveTaskData(); save();
+      showDetail(day.date);
+      updateProgress();
+    });
+
+    ul.appendChild(li);
+  });
+  return ul;
+}
+
+function showDetail(date){
+  const day = PLAN.find(d=>d.date===date);
+  if(!day){ showList(); return; }
+  document.getElementById("main").style.display = "none";
+  document.getElementById("detailView").style.display = "block";
+
+  const card = document.getElementById("detailCard");
+  card.className = "day detail-head" + (day.exam ? " exam":"") + (day.date===todayStr() ? " today":"");
+  card.innerHTML = "";
+
+  const ddayTag = ddayTagFor(day);
+  const head = document.createElement("div");
+  head.className = "day-head";
+  head.style.cursor = "default";
+  head.innerHTML = `<span class="day-title">${day.label}</span>` +
+    `<span class="day-tags">` +
+      (ddayTag ? `<span class="day-tag">${ddayTag}</span>` : "") +
+      (day.exam ? `<span class="exam-tag">시험일</span>` : "") +
+    `</span>`;
+  card.appendChild(head);
+
+  if(day.exam){
+    const subs = document.createElement("div");
+    subs.className = "exam-subjects";
+    subs.innerHTML = day.examSubjects.map(s=>`<span>${s}</span>`).join("");
+    card.appendChild(subs);
+  }
+
+  card.appendChild(buildTaskList(day));
+
+  const addRow = document.createElement("div");
+  addRow.className = "add-row";
+  addRow.innerHTML = `<input type="text" placeholder="할 일 추가"><button>추가</button>`;
+  const addInput = addRow.querySelector("input");
+  const addBtn = addRow.querySelector("button");
+  const doAdd = ()=>{
+    const val = addInput.value.trim();
+    if(!val) return;
+    if(!taskData[day.date]) taskData[day.date] = [];
+    taskData[day.date].push({id: day.date+"_new_"+Date.now(), text: val});
+    saveTaskData();
+    showDetail(day.date);
+    updateProgress();
+  };
+  addBtn.addEventListener("click", doAdd);
+  addInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") doAdd(); });
+  card.appendChild(addRow);
+
+  window.scrollTo(0,0);
+}
+
+function showList(){
+  document.getElementById("detailView").style.display = "none";
+  document.getElementById("main").style.display = "block";
+}
+
+function goToDetail(date){
+  history.pushState({date}, "", "#"+date);
+  showDetail(date);
+}
+
+document.getElementById("backBtn").addEventListener("click", ()=>{
+  history.back();
+});
+window.addEventListener("popstate", ()=>{
+  const hash = location.hash.slice(1);
+  if(hash && PLAN.find(d=>d.date===hash)) showDetail(hash);
+  else showList();
+});
+
+function updateProgress(){
+  let total=0, done=0;
+  PLAN.forEach(day=>{
+    (taskData[day.date]||[]).forEach(t=>{
+      total++;
+      if(store[t.id]) done++;
+    });
+  });
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent = `진행률 ${pct}% (${done}/${total})`;
+}
+
+headerLine();
+loadTaskData();
+renderList();
+updateProgress();
+const initHash = location.hash.slice(1);
+if(initHash && PLAN.find(d=>d.date===initHash)) showDetail(initHash);
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
